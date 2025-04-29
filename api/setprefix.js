@@ -30,10 +30,14 @@ module.exports = (req, res) => {
             prefixes[userId] = prefix;
 
             // Prefixes zurück in die Datei schreiben
-            fs.writeFile(prefixFilePath, JSON.stringify(prefixes, null, 2), (writeErr) => {
-                if (writeErr) {
-                    return res.status(500).json({ message: 'Fehler beim Speichern des Prefixes' });
-                }
+           fs.writeFile(prefixFilePath, JSON.stringify(prefixes, null, 2), (writeErr) => {
+    if (writeErr) {
+        console.error('Fehler beim Schreiben der Datei:', writeErr.message);
+        return res.status(500).json({ 
+            message: 'Fehler beim Speichern des Prefixes', 
+            error: writeErr.message 
+        });
+    }
 
                 // Erfolgsmeldung zurückgeben
                 return res.status(200).json({
