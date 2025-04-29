@@ -4,10 +4,15 @@
   "description": "API für BDFD Prefix",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node index.js",  // Falls du index.js als Hauptdatei verwendest
+    "dev": "nodemon index.js"  // Optional, für die Entwicklung
   },
-  "dependencies": {},
-  "devDependencies": {},
+  "dependencies": {
+    "express": "^4.17.1"  // Hier dein Framework oder Pakete eintragen
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"  // Entwicklungsabhängigkeiten
+  },
   "engines": {
     "node": "18.x"
   },
