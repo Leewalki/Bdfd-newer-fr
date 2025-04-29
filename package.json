@@ -1,0 +1,15 @@
+{
+  "name": "bdfd-prefix-api",
+  "version": "1.0.0",
+  "description": "API für BDFD Prefix",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "node": "18.x"
+  },
+  "private": true
+}
