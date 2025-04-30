@@ -15,8 +15,8 @@ module.exports = (req, res) => {
         // Prefixes aus der Datei laden
         fs.readFile(prefixFilePath, 'utf8', (err, data) => {
             if (err) {
-                // Falls die Datei nicht existiert, initialisieren wir ein leeres Objekt
                 if (err.code === 'ENOENT') {
+                    console.log('Datei nicht gefunden. Initialisiere eine neue Datei.');
                     data = '{}';
                 } else {
                     console.error('Fehler beim Lesen der Datei:', err.message);
@@ -24,7 +24,6 @@ module.exports = (req, res) => {
                 }
             }
 
-            // Prefixes in ein Objekt parsen
             let prefixes;
             try {
                 prefixes = JSON.parse(data);
@@ -33,10 +32,8 @@ module.exports = (req, res) => {
                 return res.status(500).json({ message: 'Fehler beim Parsen der Datei', error: parseErr.message });
             }
 
-            // Prefix für den Benutzer setzen
             prefixes[userId] = prefix;
 
-            // Prefixes zurück in die Datei schreiben
             fs.writeFile(prefixFilePath, JSON.stringify(prefixes, null, 2), (writeErr) => {
                 if (writeErr) {
                     console.error('Fehler beim Schreiben der Datei:', writeErr.message);
@@ -46,7 +43,7 @@ module.exports = (req, res) => {
                     });
                 }
 
-                // Erfolgsmeldung zurückgeben
+                console.log('Prefix erfolgreich gespeichert:', prefixes);
                 return res.status(200).json({
                     status: '200',
                     message: 'Prefix erfolgreich gesetzt',
