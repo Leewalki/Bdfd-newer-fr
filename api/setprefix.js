@@ -19,25 +19,32 @@ module.exports = (req, res) => {
                 if (err.code === 'ENOENT') {
                     data = '{}';
                 } else {
-                    return res.status(500).json({ message: 'Fehler beim Lesen der Datei' });
+                    console.error('Fehler beim Lesen der Datei:', err.message);
+                    return res.status(500).json({ message: 'Fehler beim Lesen der Datei', error: err.message });
                 }
             }
 
             // Prefixes in ein Objekt parsen
-            let prefixes = JSON.parse(data);
+            let prefixes;
+            try {
+                prefixes = JSON.parse(data);
+            } catch (parseErr) {
+                console.error('Fehler beim Parsen der Datei:', parseErr.message);
+                return res.status(500).json({ message: 'Fehler beim Parsen der Datei', error: parseErr.message });
+            }
 
             // Prefix für den Benutzer setzen
             prefixes[userId] = prefix;
 
             // Prefixes zurück in die Datei schreiben
-           fs.writeFile(prefixFilePath, JSON.stringify(prefixes, null, 2), (writeErr) => {
-    if (writeErr) {
-        console.error('Fehler beim Schreiben der Datei:', writeErr.message);
-        return res.status(500).json({ 
-            message: 'Fehler beim Speichern des Prefixes', 
-            error: writeErr.message 
-        });
-    }
+            fs.writeFile(prefixFilePath, JSON.stringify(prefixes, null, 2), (writeErr) => {
+                if (writeErr) {
+                    console.error('Fehler beim Schreiben der Datei:', writeErr.message);
+                    return res.status(500).json({ 
+                        message: 'Fehler beim Speichern des Prefixes', 
+                        error: writeErr.message 
+                    });
+                }
 
                 // Erfolgsmeldung zurückgeben
                 return res.status(200).json({
