@@ -1,8 +1,5 @@
-const fs = require('fs');
-const path = require('path');
-
-// Pfad zur Datei, in der wir die Prefixes speichern
-const prefixFilePath = path.join(__dirname, 'prefixes.json');
+// Temporäre Speicherung im Speicher (RAM)
+let userPrefixes = {};
 
 module.exports = (req, res) => {
     if (req.method === 'POST') {
@@ -12,45 +9,14 @@ module.exports = (req, res) => {
             return res.status(400).json({ message: 'Fehlende Parameter' });
         }
 
-        // Prefixes aus der Datei laden
-        fs.readFile(prefixFilePath, 'utf8', (err, data) => {
-            if (err) {
-                if (err.code === 'ENOENT') {
-                    console.log('Datei nicht gefunden. Initialisiere eine neue Datei.');
-                    data = '{}';
-                } else {
-                    console.error('Fehler beim Lesen der Datei:', err.message);
-                    return res.status(500).json({ message: 'Fehler beim Lesen der Datei', error: err.message });
-                }
-            }
+        // Prefix im Speicher speichern
+        userPrefixes[userId] = prefix;
 
-            let prefixes;
-            try {
-                prefixes = JSON.parse(data);
-            } catch (parseErr) {
-                console.error('Fehler beim Parsen der Datei:', parseErr.message);
-                return res.status(500).json({ message: 'Fehler beim Parsen der Datei', error: parseErr.message });
-            }
-
-            prefixes[userId] = prefix;
-
-            fs.writeFile(prefixFilePath, JSON.stringify(prefixes, null, 2), (writeErr) => {
-                if (writeErr) {
-                    console.error('Fehler beim Schreiben der Datei:', writeErr.message);
-                    return res.status(500).json({ 
-                        message: 'Fehler beim Speichern des Prefixes', 
-                        error: writeErr.message 
-                    });
-                }
-
-                console.log('Prefix erfolgreich gespeichert:', prefixes);
-                return res.status(200).json({
-                    status: '200',
-                    message: 'Prefix erfolgreich gesetzt',
-                    userId: userId,
-                    prefix: prefix
-                });
-            });
+        return res.status(200).json({
+            status: '200',
+            message: 'Prefix erfolgreich gesetzt',
+            userId: userId,
+            prefix: prefix,
         });
     } else {
         res.status(405).json({ message: 'Methode nicht erlaubt' });
