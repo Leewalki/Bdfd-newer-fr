@@ -50,7 +50,6 @@
     </div>
 
     <script>
-        // Funktion zum Senden der Anfrage zum Ändern des Prefixes
         document.getElementById('prefixForm').addEventListener('submit', function(event) {
             event.preventDefault();
 
@@ -64,16 +63,17 @@
                 },
                 body: JSON.stringify({ userId, prefix: newPrefix })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === '200') {
-                    document.getElementById('responseMessage').innerText = `Prefix für Benutzer ${userId} wurde erfolgreich geändert!`;
-                } else {
-                    document.getElementById('responseMessage').innerText = `Fehler: ${data.message}`;
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP-Fehler! Status: ${response.status}`);
                 }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById('responseMessage').innerText = `Prefix für Benutzer ${userId} wurde erfolgreich geändert!`;
             })
             .catch(error => {
-                document.getElementById('responseMessage').innerText = 'Es ist ein Fehler aufgetreten.';
+                document.getElementById('responseMessage').innerText = `Fehler: ${error.message}`;
             });
         });
     </script>
